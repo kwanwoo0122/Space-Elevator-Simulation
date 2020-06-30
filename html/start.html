@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <head>
+    <script src="../js/Chart.min.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      /* START버튼 위치 설정 */
+      .start-button {
+        position: absolute;
+        right: 13%;
+        bottom: 11%;
+        width: 34%;
+        padding: 2.3%;
+        background-color: #5f1f69;
+      }
+
+      .start-button>img {
+        width: 100%;
+      }
+
+      .margin {
+        background-color: black;
+        flex-grow: 1;
+      }
+
+      #loader {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 0vw;
+        height: 100vh;
+        background-color: transparent;
+        transition: background-color 0.5s ease-in-out;
+        z-index: 100;
+      }
+
+      #loader.load {
+        display: block !important;
+        background-color: white;
+        width: 100vw;
+      }
+    </style>
+  </head>
+
+<body>
+  <div class="d-flex" style="height:100vh; width:100vw; align-items:stretch; flex-direction:column">
+    <div class="margin"></div>
+    <div style="position:relative">
+      <img src="../assets/images/우주.png" style="width:100vw; height:100vh;" />
+      <button id="pageStart" type="button" class="btn start-button">
+        <img src="../assets/images/start.png" />
+      </button>
+    </div>
+    <div class="margin"></div>
+  </div>
+  <div id="loader"></div>
+
+  <a id="site" href="../html/help.html" hidden></a>
+  <script>
+    // start페이지가 로딩되었을 경우 실행되는 함수
+    window.addEventListener('load', function () {
+      localStorage.setItem("checking", "");
+      localStorage.setItem("checkTutorial", 0)
+      localStorage.setItem("checkTutorialGif", 0)
+    })
+
+    // "start" 버튼이 클릭되었을 때 실행되는 함수
+    function nextPage() {
+      loader.classList.add('load');
+      setTimeout(function () {
+        site.click();
+      }, 500)
+    }
+    document.getElementById("pageStart").addEventListener("click", nextPage)
+  </script>
+</body>
+
+</html>

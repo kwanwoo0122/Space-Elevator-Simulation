@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src="../js/Chart.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="../js/jquery-3.3.1.min.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <div>
+    <button type="button" class="btn" id="loader"
+      style="position:relative; float:right; margin-top:0.8%; margin-right:0.7%">튜토리얼</button>
+    <div class="jumbotron jumbotron-fluid" style="margin-bottom:0%">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="../html/start.html" style="width:100%; margin-right:0%">
+          <h1 style="text-align:center; font-size:250%" class="text-info">
+            Simulation &nbspHelp Site
+          </h1>
+        </a>
+        <p style="text-align:center">Elevator And Physics Collaboration </p>
+      </div>
+    </div>
+    <div>
+      <div id="nav">
+        <ul>
+          <li style="width:10.5%;"><a class="active green" href="../html/start.html">EAPC</a></li>
+          <li style="width:16%;"><a href="../html/help.html" style="background-color:#b3b1b1; color:white">도움말</a></li>
+          <li style="width:16%;"><a href="../html/simulation.html"><strong>시뮬레이션</strong></a></li>
+          <li style="width:11.3%;"><a href="../html/chart1.html">1회차</a></li>
+          <li style="width:11.3%;"><a href="../html/chart2.html">2회차</a></li>
+          <li style="width:11.3%;"><a href="../html/chart3.html">3회차</a></li>
+          <li style="width:11.3%;"><a href="../html/chart4.html">4회차</a></li>
+          <li style="width:11.3%;"><a href="../html/chart5.html">5회차</a></li>
+        </ul>
+      </div>
+      <div style="width:100%; height:70%">
+        <div style="padding-top:2%; padding-left:4%;">
+          <strong style="font-size:200%; font-family:'NanumB'">도움말</strong>
+          <span style="font-size:140%; font-family:'NanumB'; margin-left:7%">
+            ※전체화면으로 봐주세요※
+          </span>
+          <br /><br />
+          <span style="font-size:140%; font-family:'NanumB'">
+            Elevator And Physics Collaboration의 약자인 <strong>EAPC</strong>는 엘레베이터 시뮬레이션 사이트입니다.
+          </span>
+          <br /><br />
+          <span style="font-size:140%; font-family:'NanumB'">
+            각 페이지 상단에 있는 푸른색의 굵은 로고를 클릭하면 시작 페이지로 이동할 수 있습니다.
+          </span>
+          <br /><br />
+
+          <span style="font-size:140%; font-family:'NanumB'">
+            시뮬레이션 메뉴를 누르면 시뮬레이션 페이지로 이동하고, 튜토리얼이 나옵니다.&nbsp; 튜토리얼은 '튜토리얼' 버튼을 통해 볼 수 있습니다.
+          </span>
+          <br /><br />
+
+          <span style="font-size:140%; font-family:'NanumB'">
+            [시간-힘 그래프 T-F GRAPH]에 (첫번째 그래프에), 힘을 입력하여 엘레베이터를 출발 시킬수 있습니다.
+          </span>
+          <br />
+          <span style="font-size:140%; font-family:'NanumB'">
+            "힘 추가", "힘 제거"를 통해 힘을 변경하고 "질량 조절"을 통해 질량을 바꿀 수 있습니다.
+          </span>
+          <span style="font-size:110%; font-family:'NanumB'; margin-left:3%">
+            (기본 질량은 1 입니다.)
+          </span>
+          <br /><br />
+
+          <span style="font-size:140%; font-family:'NanumB'">
+            엘레베이터가 출발하지 않거나 이동하는 중에는 다시 할 수 없습니다.
+          </span>
+          <br /><br />
+          <span style="font-size:140%; font-family:'NanumB'">
+            "돌아가기"를 누르면 시뮬레이션 페이지에서 도움말 페이지로 돌아올 수 있습니다.
+          </span>
+          <br /><br />
+          <span style="font-size:140%; font-family:'NanumB'">
+            엘레베이터가 도착한다면 총 5번 다시 할 수 있습니다. 5번의 다시하기 후에는 새로고침을 해서 다시 시뮬레이션 할 수 있습니다.
+          </span>
+          <br /><br />
+          <span style="font-size:140%; font-family:'NanumB'">
+            1~5회차 페이지는 첫번째~다섯번째 시뮬레이션의 결과를 보여줍니다.
+          </span>
+          <br /><br />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- gif튜토리얼 창 만들기 -->
+  <div id="tutorial"
+    style="display:none; position:fixed; width:100%; height:100%; bottom:0%; z-index:900; background-color:#919191c9">
+    <img src="../assets/images/튜토리얼.gif" style="width:95%; height:95%; margin-top:1%; margin-left:2.5%;" />
+    <!-- 튜토리얼 종료 버튼 -->
+    <button id="close" type="button" style="position:absolute; right:3.7%; top:8%" class="close">
+      <h1>&times;</h1>
+    </button>
+  </div>
+
+  <script>
+    // start페이지를 갔다오면 튜토리얼을 보이게 한다.
+    if (localStorage.getItem("checkTutorialGif") == 0) {
+      tutorial.style.display = 'block';
+    }
+
+    // 튜토리얼 종료하는 함수
+    function closePage() {
+      localStorage.setItem("checkTutorialGif", 1)
+      tutorial.style.display = 'none';
+    }
+
+    // 튜토리얼버튼을 클릭시 튜토리얼이 보이게 하는 함수
+    function loadTutorial() {
+      tutorial.style.display = 'block';
+    }
+
+    document.getElementById("close").addEventListener("click", closePage);
+    document.getElementById("loader").addEventListener("click", loadTutorial);
+  </script>
+</body>
+
+</html>

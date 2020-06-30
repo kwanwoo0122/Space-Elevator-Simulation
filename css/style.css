@@ -1,0 +1,104 @@
+#nav {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e7e7e7;
+  background-color: #f3f3f3;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 10px 25px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: #ddd;
+}
+
+.active {
+  color: white;
+}
+
+.green {
+  background-color: #4CAF50;
+}
+
+a:hover {
+  text-decoration: none
+}
+
+@font-face {
+  font-family: "NanumB";
+  src: url('../assets/font/NanumSquareR.ttf');
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 엘레비이터 위치 및 크기 조정 */
+#elevator {
+  position: absolute;
+  left: 51%;
+  bottom: 0%;
+  width: 17%;
+}
+
+/* 시계 디자인 */
+#clock {
+  margin-top: 1%;
+  line-height: 210%;
+  color: #666;
+  font-size: 6vw;
+  text-align: center;
+}
+
+.buttonDiv {
+  width: 50%;
+  padding: 10px;
+}
+
+.buttonDiv>a {
+  width: 100%;
+}
+
+#back {
+  color: white;
+  background-color: #115491d9;
+}
+
+#back:hover {
+  background-color: #134674f0;
+}

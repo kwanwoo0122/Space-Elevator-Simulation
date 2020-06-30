@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src="../js/Chart.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="../js/jquery-3.3.1.min.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <div class="d-flex" style="flex-direction:column">
+    <div class="jumbotron jumbotron-fluid" style="margin-bottom:0%">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="../html/start.html">
+          <h1 style="margin-left:95%; float:left; font-size:250%" class="text-info">
+            Simulation &nbspFirst Chart
+          </h1>
+        </a>
+        <p style="margin-left:40%;">Elevator And Physics Collaboration</p>
+      </div>
+    </div>
+    <div>
+      <div id="nav">
+        <ul>
+          <li style="width:10.5%;"><a class="active" href="../html/start.html">EAPC</a></li>
+          <li style="width:16%;"><a href="../html/help.html">도움말</a></li>
+          <li style="width:16%;"><a href="../html/simulation.html">시뮬레이션</a></li>
+          <li style="width:11.3%;"><a href="../html/chart1.html">1회차</a></li>
+          <li style="width:11.3%;"><a href="../html/chart2.html">2회차</a></li>
+          <li style="width:11.3%;"><a href="../html/chart3.html">3회차</a></li>
+          <li style="width:11.3%;"><a href="../html/chart4.html">4회차</a></li>
+          <li style="width:11.3%;"><a href="../html/chart5.html" style="background-color:#b3b1b1; color:white">5회차</a></li>
+        </ul>
+      </div>
+      <div class="d-flex" style="flex-direction:row">
+        <div style="flex-grow:1">
+          <div id="data1"
+            style="text-align:left; height:180px; line-height:200px; color:#666;font-size:50px; padding-left:5%">시간
+            <span style='font-size:60px'>:</span> 데이터가 없습니다.</div>
+          <div id="data2"
+            style="text-align:left; height:180px; line-height:200px; color:#666;font-size:50px; padding-left:5%">질량
+            <span style='font-size:60px'>:</span> 1</div>
+          <div id="data3"
+            style="text-align:left; height:180px; line-height:200px; color:#666;font-size:50px; padding-left:5%">최고속도
+            <span style='font-size:60px'>:</span> 데이터가 없습니다.</div>
+          <div id="data4"
+            style="text-align:left; height:180px; line-height:200px; color:#666;font-size:50px; padding-left:5%">평균속도
+            <span style='font-size:60px'>:</span> 데이터가 없습니다.</div>
+          <div id="data5"
+            style="text-align:left; height:180px; line-height:200px; color:#666;font-size:50px; padding-left:5%">거리
+            <span style='font-size:60px'>:</span> 데이터가 없습니다.</div>
+        </div>
+        <div style="width:41%; padding-top:3%; padding-right:2%">
+          <div style="height:100%; overflow-y:auto">
+            <div style="width:100%">
+              <canvas id="myCanvas"></canvas>
+            </div>
+            <div style="width:100%; padding-top:5%">
+              <canvas id="myCanvas1"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // [시간-힘 그래프 T-F GRAPH]
+    var ctx = document.getElementById("myCanvas").getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: '[시간-힘 그래프 T-F GRAPH]',
+          data: null,
+          borderWidth: 2,
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 99, 132,0)'
+        }, {
+          label: '중력값',
+          data: [],
+          borderWidth: 2,
+          borderColor: 'blue',
+          backgroundColor: 'rgba(255, 99, 132, 0)'
+        }]
+      },
+      options: {
+        events: ["click"],
+        onClick: function (evt, items) {
+
+        },
+        elements: {
+          point: {
+            radius: 1,
+            hoverRadius: 1.5
+          },
+          line: {
+            tension: 0,
+          }
+        },
+        scales: {
+          xAxes: [{
+            type: "linear",
+            ticks: {
+              beginAtZero: true,
+              min: 0,
+              max: 10
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '시간(s)'
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              max: 25,
+              min: -5
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '힘(N)'
+            }
+          }]
+        }
+      }
+    })
+
+    // [시간-위치 그래프 T-X GRAPH]
+    var ctx1 = document.getElementById("myCanvas1").getContext('2d');
+    var myChart1 = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: '[시간-위치 그래프 T-X GRAPH]',
+          data: null,
+          borderWidth: 2,
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 99, 132,0)'
+        }]
+      },
+      options: {
+        events: ["click"],
+        onClick: function (evt, items) {
+
+        },
+        elements: {
+          point: {
+            radius: 0.5,
+            hoverRadius: 1
+          },
+          line: {
+            tension: 0,
+          }
+        },
+        scales: {
+          xAxes: [{
+            type: "linear",
+            ticks: {
+              beginAtZero: true,
+              min: 0,
+              max: 10
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '시간(s)'
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '위치(m)'
+            }
+          }]
+        }
+      }
+    })
+
+    // 시뮬레이션 한 횟수가 5번 이상일 경우 값들을 입력
+    if (localStorage.getItem("checking") >= 5) {
+      if (typeof (Storage) !== "undefined") {
+        data1.innerHTML = "시간 <span style='font-size:60px'>:</span> " + localStorage.getItem("time5");
+        data2.innerHTML = "질량 <span style='font-size:60px'>:</span> " + localStorage.getItem("mass5");
+        data3.innerHTML = "최고속도 <span style='font-size:60px'>:</span> " + localStorage.getItem("best5") + "M/H";
+        data4.innerHTML = "평균속도 <span style='font-size:60px'>:</span> " + localStorage.getItem("average5") + "M/H";
+        data5.innerHTML = "거리 <span style='font-size:60px'>:</span> " + localStorage.getItem("distance5") + "M";
+        myChart.data.datasets[0].data = JSON.parse(localStorage.getItem("myChart_graph5"));
+        myChart1.data.datasets[0].data = JSON.parse(localStorage.getItem("myChart1_graph5"));
+        myChart.data.datasets[1].data = JSON.parse(localStorage.getItem("gravity5"));
+        myChart.options.scales.xAxes[0].ticks.max = JSON.parse(localStorage.getItem("myChart_x_max5"));
+        myChart.options.scales.yAxes[0].ticks.max = JSON.parse(localStorage.getItem("myChart_y_max5"));
+        myChart.options.scales.yAxes[0].ticks.min = JSON.parse(localStorage.getItem("myChart_y_min5"));
+        myChart1.options.scales.xAxes[0].ticks.max = JSON.parse(localStorage.getItem("myChart1_x_max5"));
+        myChart.update();
+        myChart1.update();
+      } else {
+        alert("구글 크롬 브라우저를 사용해 주세요.")
+      }
+    }
+  </script>
+</body>
+
+</html>

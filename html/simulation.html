@@ -1,0 +1,746 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src="../js/Chart.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="../js/jquery-3.3.1.min.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <div class="d-flex" style="height:100vh; width:100vw; align-items:stretch;">
+    <div style="position:relative; width:30vh;">
+      <img src="../assets/images/좌표퍼센트.png" height="100%" />
+      <img src="../assets/images/엘리베이터열림0.png" id="elevator" />
+    </div>
+    <div class="d-flex" style="flex-grow:1; flex-direction:column; align-items:stretch">
+      <div>
+        <div class="jumbotron jumbotron-fluid pb-0 pt-0 mb-0">
+          <div class="container-fluid" style="position:relative; height:10%">
+            <a class="navbar-brand" href="../html/start.html" style="width:100%; margin-right:0%">
+              <h1 style="text-align:center" class="text-info">Elevator Simulation [EAPC]</h1>
+            </a>
+            <button type="button" class="btn" id="loader" style="position:absolute; right:1.5%; top:10%">튜토리얼</button>
+            <p style="text-align:center">Elevator And Physics Collaboration </p>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex" style="flex-grow:1; flex-direction:row; align-items:stretch">
+        <div class="d-flex" style="width:54%; position:relative; flex-direction:column; padding:5px;">
+          <div class="dropdown" style="position:absolute; align-self:flex-end">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+              질량 조절
+            </button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" onclick="controlmass(this);">1</button>
+              <button class="dropdown-item" onclick="controlmass(this);">5</button>
+              <button class="dropdown-item" onclick="controlmass(this);">10</button>
+              <button class="dropdown-item" onclick="controlmass(this);">15</button>
+              <a class="dropdown-item disabled">현재 질량 : <span id="currentmass">1</span></a>
+            </div>
+          </div>
+          <div id="clock">
+            00:00:00<span style='font-size:50%;'> 00</span>
+          </div>
+          <table id="chart" class="table table-bordered">
+            <thead>
+              <tr>
+                <th style="width:18.5%">회차</th>
+                <th style="width:16%">1회</th>
+                <th style="width:16%">2회</th>
+                <th style="width:16%">3회</th>
+                <th style="width:16%">4회</th>
+                <th style="width:16%">5회</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>시간</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>최고속도</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>평균속도</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>거리</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="d-flex" style="flex-grow:1; flex-wrap:wrap; align-items:flex-end; align-content:flex-end">
+            <div class="buttonDiv">
+              <a id="reset" style="color:white; font-family:'NanumB'" class="btn btn-secondary"
+                href="../html/simulation.html">시뮬레이션 기록 초기화</a>
+            </div>
+            <div class="buttonDiv">
+              <a id="restart" style="color:white; font-family:'NanumB'" class="btn btn-warning">다음 회차 실행하기</a>
+            </div>
+            <div class="buttonDiv">
+              <a id="back" class="btn" href="javascript:setBack();" style="font-family:'NanumB'">도움말로 돌아가기</a>
+            </div>
+            <div class="buttonDiv">
+              <a id="start" style="color:white; font-family:'NanumB'" class="btn btn-success">엘리베이터 출발하기</a>
+            </div>
+          </div>
+        </div>
+        <div style="width:46%; padding:10px">
+          <div style="height:100%; overflow-y:auto; overflow-x: hidden">
+            <div style="width:100%">
+              <canvas id="myCanvas"></canvas>
+            </div>
+            <div class="clearfix" style="margin:10px">
+              <button id="press" type="button" class="btn btn-primary" style="float:left; margin-left:6.65%">힘
+                추가</button>
+              <div class="progress" style="width:50%; float:left; margin-left:6.9%; margin-top:2%">
+                <div id="progressbar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                  style="width:100%;"></div>
+              </div>
+              <button id="remove" type="button" class="btn btn-danger float-right" style="margin-right:1.5%;">힘
+                제거</button>
+            </div>
+            <div style="width:100%">
+              <canvas id="myCanvas1"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--  사진이 넘어가는 튜토리얼 창 만들기 -->
+  <div id="tutorial" class="carousel slide" data-ride="carousel"
+    style="display:none; position:fixed; width:100%; height:100%; bottom:0%; z-index:1000; background-color:#919191c9">
+
+    <!-- 하단의 가로 막대 만들기 -->
+    <ul class="carousel-indicators" style="bottom:-1%">
+      <li data-target="#tutorial" data-slide-to="0" class="active"></li>
+      <li data-target="#tutorial" data-slide-to="1"></li>
+      <li data-target="#tutorial" data-slide-to="2"></li>
+    </ul>
+
+    <!-- 튜토리얼 슬라이드 -->
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="../assets/images/튜토리얼1.png" style="width:95%; height:95%; margin-top:1%; margin-left:2.5%;" />
+        <button id="close1" type="button" style="position:absolute; right:3.7%; top:8%" class="close">
+          <h1>&times;</h1>
+        </button>
+      </div>
+      <div class="carousel-item">
+        <img src="../assets/images/튜토리얼2.png" style="width:95%; height:95%; margin-top:1%; margin-left:2.5%;" />
+        <button id="close2" type="button" style="position:absolute; right:3.7%; top:8%" class="close">
+          <h1>&times;</h1>
+        </button>
+      </div>
+      <div class="carousel-item">
+        <img src="../assets/images/튜토리얼3.png" style="width:95%; height:95%; margin-top:1%; margin-left:2.5%;" />
+        <button id="close3" type="button" style="position:absolute; right:3.7%; top:8%" class="close">
+          <h1>&times;</h1>
+        </button>
+      </div>
+    </div>
+
+    <!-- 좌 우 컨트롤 버튼 -->
+    <a class="carousel-control-prev" href="#tutorial" data-slide="prev" style="width:2%">
+      <span class="carousel-control-prev-icon" style="color:#212529"></span>
+    </a>
+    <a class="carousel-control-next" href="#tutorial" data-slide="next" style="width:3%">
+      <span class="carousel-control-next-icon"></span>
+    </a>
+  </div>
+
+  <a id="simulation" href="../html/simulation.html" hidden></a>
+  <script>
+    // 페이지에 사용되는 전역변수들
+    var avgVel, maxVel, distance, maxPos,
+      I = 0,
+      picture = 0,
+      time, time1, second, minute, hour,
+      set = 0,
+      check = 0,
+      finishFlag, barColor = 0,
+      startFlag = 0,
+      openDoor,
+
+      // 초기 질량 : 1
+      m = 1;
+
+    // 상수 : dt 변한시간, R 지구 반지름, M 지구 질량, G 중력 상수
+    const dt = 0.01,
+      R = 6371000,
+      M = 5.972E+24,
+      G = 6.673E-11;
+
+    // start페이지를 갔다오면 튜토리얼을 보이게 한다.
+    if (localStorage.getItem("checkTutorial") == 0) {
+      tutorial.style.display = 'block'
+    }
+
+    // [시간-힘 그래프] 생성
+    var ctx = document.getElementById("myCanvas").getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: '[시간-힘 그래프 T-F GRAPH]',
+          data: [{
+            x: 0,
+            y: 0
+          }],
+          borderWidth: 2,
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 99, 132,0)'
+        }, {
+          label: '중력값',
+          data: [],
+          borderWidth: 2,
+          borderColor: 'blue',
+          backgroundColor: 'rgba(255, 99, 132, 0)'
+        }]
+      },
+      options: {
+        // 그래프를 클릭했을 때 실행되는 함수
+        events: ["click"],
+        onClick: function (evt, items) {
+          var data = myChart.data.datasets[0].data;
+
+          // 프로그레스 바가 붉은색이라면
+          if (barColor == 1) {
+            // 값들이 존재한다면
+            if (items[0] != undefined) {
+              // 그래프에 힘을 입력한 상태라면
+              if (data.length != 1) {
+                // 힘을 제거한다.
+                data.splice(items[0]._index, 2)
+                TXGRAPH()
+                myChart.update();
+                myChart1.update();
+              }
+            }
+            return;
+          }
+
+          // 출발 하고 나서 그래프를 눌렀을 때
+          if (finishFlag == 1) {
+            alert("엘리베이터가 도착하였습니다. 다시하기를 눌러주세요.");
+            return;
+          }
+
+          // 엘리베이터가 이동 중인데 그래프를 눌렀을 때
+          if (startFlag == 1) {
+            alert("엘리베이터가 이동 중입니다.");
+            return;
+          }
+
+          // 엘리베이터의 문이 다 열렸을때 엘리베이터 문 초기화
+          if (openDoor != undefined)
+            clearInterval(openDoor)
+
+          /*
+            BOTTOM : 차트의 캔버스 위쪽 시작지점부터 x축 까지의 거리
+            TOP : 차트의 캔버스 위쪽 시작지점부터 y축 최댓값 까지의 거리
+            RIGHT : 차트의 캔버스 왼쪽 시작지점부터 끝 지점까지의 거리
+            LEFT : 차트의 캔버스 왼쪽 시작지점부터 x=0까지의 거리
+            offsetx :차트의 왼쪽 위의 모서리에서부터 x좌표 위치
+            offsety :차트의 왼쪽 위의 모서리에서부터 y좌표 위치
+            max_x : x축의 최댓값
+            min_x : x축의 최솟값
+            max_y : y축의 최댓값
+            min_y : y축의 최솟값
+            X : 그래프 안의 x값을 픽셀로 변경하는 과정
+            Y : 그래프 안의 y값을 픽셀로 변경하는 과정
+          */
+          var BOTTOM = myChart.chartArea.bottom,
+            TOP = myChart.chartArea.top,
+            offsety = evt.offsetY,
+            max_y = myChart.scales["y-axis-0"].max,
+            min_y = myChart.scales["y-axis-0"].min,
+            Y = (((max_y - min_y) * (BOTTOM - offsety)) / (BOTTOM - TOP)) + min_y,
+            RIGHT = myChart.chartArea.right,
+            LEFT = myChart.chartArea.left,
+            offsetx = evt.offsetX,
+            max_x = myChart.scales["x-axis-0"].max,
+            min_x = myChart.scales["x-axis-0"].min,
+            X = (((max_x - min_x) * (offsetx - LEFT)) / (RIGHT - LEFT)) + min_x;
+
+          // 만약 그래프 안의 좌표에 찍는다면
+          if ((BOTTOM > offsety) && (TOP < offsety)) {
+
+            // '다음 회차 실행하기' 를 5번 눌렀을 경우
+            if (set >= 5) {
+              alert("총 5번의 횟수가 끝났습니다. 시뮬레이션 기록 초기화를 눌러주세요.")
+              return;
+            }
+
+            // [시간-힘 그래프]의 데이터 값들
+            var data = myChart.data.datasets[0].data,
+              // 클릭한 점의 좌표(x,y)
+              point = {
+                x: X,
+                y: Y
+              };
+
+            // 기존 데이터보다 지금 클릭한 좌표가 x값이 더 크다면
+            if (data[data.length - 1].x < point.x) {
+              // 클릭한 좌표값을 입력한다.
+              data.push(point)
+            }
+
+            // 처음 데이터인 0보다 작은 데이터가 입력되지 않도록 하는 식
+            if (data[0].x > point.x) {
+              data.splice(0, 0, point)
+            }
+            // [시간-힘 그래프]에 두개의 데이터 사이에 데이터 넣기
+            else {
+              for (var i = 0; i < data.length - 1; i++) {
+                if (data[i].x <= point.x && data[i + 1].x >= point.x) {
+                  data.splice(i + 1, 0, point)
+                  break
+                }
+              }
+            }
+
+            /*
+              [시간-힘 그래프]의 x축과 y축의 값을 늘려주는 식
+            */
+            if (Y > max_y * 0.8) {
+              myChart.options.scales.yAxes[0].ticks.max *= 2;
+            }
+            if (Y < min_y * 0.8) {
+              myChart.options.scales.yAxes[0].ticks.min *= 2;
+            }
+            if (X > max_x * 5 / 6) {
+              myChart.options.scales.xAxes[0].ticks.max += 5
+            }
+            myChart1.options.scales.xAxes[0].ticks.max = myChart.options.scales.xAxes[0].ticks.max;
+
+            TXGRAPH();
+            gravityMass();
+
+            //그래프에 변경된 값들을 반영
+            myChart.update();
+            myChart1.update();
+          }
+        },
+        elements: {
+          point: {
+            radius: 1,
+            hoverRadius: 1.5
+          },
+          line: {
+            tension: 0,
+          }
+        },
+        scales: {
+          xAxes: [{
+            type: "linear",
+            ticks: {
+              beginAtZero: true,
+              max: 10,
+              min: 0
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '시간(s)'
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              max: 25,
+              min: -5
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '힘(N)'
+            }
+          }]
+        }
+      }
+    })
+
+    // [시간-위치 그래프] 생성
+    var ctx1 = document.getElementById("myCanvas1").getContext('2d');
+    var myChart1 = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: '[시간-위치 그래프 T-X GRAPH]',
+          data: [],
+          borderWidth: 2,
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 99, 132,0)'
+        }]
+      },
+      options: {
+        events: ["click"],
+        onClick: function (evt, items) {
+
+        },
+        elements: {
+          point: {
+            radius: 0.5,
+            hoverRadius: 1
+          },
+          line: {
+            tension: 0,
+          }
+        },
+        scales: {
+          xAxes: [{
+            type: "linear",
+            ticks: {
+              beginAtZero: true,
+              max: myChart.options.scales.xAxes[0].ticks.max,
+              min: 0
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '시간(s)'
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '위치(m)'
+            }
+          }]
+        }
+      }
+    })
+
+    // 중력값을 정해주는 함수
+    function gravityMass() {
+      var gravity = G * M * m / R ** 2,
+        gravityData = myChart.data.datasets[1].data;
+      gravityData.splice(0, gravityData.length);
+      gravityData.push({
+        x: 0,
+        y: gravity
+      }, {
+        x: myChart.options.scales.xAxes[0].ticks.max,
+        y: gravity
+      });
+
+      // 중력을 올림
+      gravity = Math.ceil(gravity);
+      // 중력의 2배보다 힘 그래프의 y축 최대값이 작을 경우
+      if (myChart.options.scales.yAxes[0].ticks.max < gravity * 2) {
+        myChart.options.scales.yAxes[0].ticks.max = gravity * 2;
+        myChart.options.scales.yAxes[0].ticks.min = -gravity * 0.3;
+        myChart.update();
+      }
+    }
+    gravityMass();
+
+    // 질량 조절 함수
+    function controlmass(obj) {
+      var data1 = myChart1.data.datasets[0].data;
+      if (data1.length != 0 && ++I >= data1.length) {
+        alert("엘리베이터가 도착하였습니다. 다시하기를 눌러주세요.");
+        return;
+      }
+      m = obj.innerHTML;
+      currentmass.innerHTML = m;
+      gravityMass();
+      TXGRAPH();
+      myChart.update();
+      myChart1.update();
+    }
+
+    // [시간-힘 그래프]에 힘이 입력되었을 경우 [시간-위치 그래프]의 위치를 구해주는 식
+    function TXGRAPH() {
+      var data = myChart.data.datasets[0].data,
+        data1 = myChart1.data.datasets[0].data = [],
+        t = 0,
+        v = 0,
+        x = 0,
+        A, B, g, f, a, dv, dx;
+      // 최고속도
+      maxVel = 0;
+      // 위치, 최고위치
+      distance = 0;
+      maxPos = 0;
+      for (var i = 1; i < data.length; i++) {
+        A = (data[i - 1].y - data[i].y) / (data[i - 1].x - data[i].x)
+        B = data[i - 1].y - (A * data[i - 1].x)
+        for (; t < data[i].x; t += dt) {
+          g = G * M * m / (R + x) ** 2;
+          f = A * t + B - g;
+          a = f / m;
+          dv = a * dt;
+          dx = v * dt;
+          v += dv;
+          x += dx;
+          // 최고속도, 최고거리를 구함
+          if (v > maxVel) maxVel = v;
+          if (x > maxPos) maxPos = x;
+          // 위치가 음수라면 위치와 속도를 0으로 초기화
+          if (x < 0) {
+            x = 0;
+            v = 0;
+          }
+          data1.push({
+            x: t,
+            y: x
+          });
+        }
+      }
+      // 평균속도
+      avgVel = x / t;
+      distance = x;
+    }
+
+    //엘리베이터 출발하기 를 눌렀을 때 실행되는 함수
+    function elevatorMove() {
+      if (startFlag == 0) {
+        startFlag = 1;
+
+        // 그래프들의 데이터
+        var data = myChart.data.datasets[0].data,
+          data1 = myChart1.data.datasets[0].data;
+
+        //[시간-힘 그래프]에 아무런 값을 입력하지 않았을 경우
+        if (set >= 5) {
+          alert("총 5번의 횟수가 끝났습니다. 시뮬레이션 기록 초기화를 눌러주세요.")
+          return;
+        }
+
+        // 힘을 입력하지 않았을 경우
+        if (data.length == 1) {
+          alert("[시간-힘 그래프 T-F GRAPH]에 먼저 좌표를 입력해주세요.");
+          startFlag = 0;
+          return;
+        }
+
+        I = 0;
+        // 엘리베이터가 출발할 때 실행되는 함수
+        var move = setInterval(function () {
+          /*
+           엘리베이터에 상승값에 상승값을 계속 더해줌
+           엘리베이터를 이동시키는 식
+          */
+          elevator.style.bottom = (data1[I].y / maxPos) * 89 + "%";
+
+          // [시간-힘 그래프]의 시간 값을 저장시키는 변수
+          time = "";
+          // [시간-힘 그래프]의 시간 값 중 소수 첫째 자리까지의 초를 저장시키는 변수
+          time1 = "";
+          // [시간-힘 그래프]의 시간 값을 반올림 시켜 time 에 더해주는 식
+          time += (Math.floor(data1[I].x));
+          // [시간-힘 그래프]의 시간 값 중 초를 소수 첫째 자리까지 반올림 시켜주는 식
+          time1 += (data1[I].x % 1).toFixed(1) * 10;
+
+          // 초, 분, 시
+          second = addZeros(parseInt(time) % 60, 2);
+          minute = addZeros(Math.floor(time / 60), 2);
+          hour = addZeros(Math.floor(time / 3600), 2);
+
+          // html의 div id 가 clock이라는 값을 받아와서 clock 변수에 대입
+          clock.innerHTML = hour + ":" + minute + ":" + second + "<span style='font-size:50%;'>" + "&nbsp" +
+            addZeros(time1, 2) + "</span>";
+
+          if (++I >= data1.length) {
+            clearInterval(move);
+            openElevatorDoor();
+          }
+
+          // 만약 엘리베이터가 달에 도착했을때 엘리베이터를 멈추고 엘리베이터의 문을 연다.
+        }, 1000 * dt);
+      }
+    }
+
+    //자릿수 맞춰주는 함수
+    function addZeros(num, digit) {
+      var zero = "";
+      num = num.toString();
+      if (num.length < digit) {
+        for (e = 0; e < digit - num.length; e++) {
+          zero += "0";
+        }
+      }
+      return zero + num;
+    }
+
+    // 엘리베이터 문이 열리는 함수
+    function openElevatorDoor() {
+      // 엘리베이터 문 열림
+      openDoor = setInterval(function () {
+
+        // 엘리베이터 사진들을 차례로 바꿈
+        elevator.src = "엘리베이터열림" + picture + ".png";
+        picture++;
+
+        // 문이 모두 열리면 문이 열리는 걸 중지시키는 식
+        if (picture == 8) {
+          clearInterval(openDoor);
+          finishFlag = 1;
+
+          // 몇 회차인지 구분하기 위한 변수
+          check++;
+
+          // check 를 인터넷에 임시 저장함
+          localStorage.setItem("checking", check);
+          saveData(check);
+
+        }
+      }, 250);
+    }
+
+    // '다음 회차 실행하기' 를 눌렀을 때 실행되는 함수
+    function setRestart() {
+      // 시뮬레이션을 5회 실행하였을 경우
+      if (set >= 5) {
+        alert("총 5번의 횟수가 끝났습니다. 시뮬레이션 기록 초기화를 눌러주세요.")
+        return;
+      }
+
+      // 엘리베이터 기본값 설정하는 함수
+      function setElevator() {
+        var data = myChart.data.datasets[0].data;
+        var data1 = myChart1.data.datasets[0].data;
+
+        // [시간-힘 그래프]에 데이터를 입력하지 않았을 때
+        if (data.length == 1) {
+          alert("[시간-힘 그래프 T-F GRAPH]에 먼저 좌표를 입력해주세요.")
+          return;
+        }
+
+        // 기본값 설정
+        startFlag = 0;
+        finishFlag = 0;
+        m = 1;
+        picture = 0;
+        barColor = 0;
+        elevator.setAttribute("style", "bottom:0px;")
+        elevator.setAttribute("src", "엘리베이터열림0.png")
+        progressbar.setAttribute("class", "progress-bar progress-bar-striped progress-bar-animated bg-primary");
+        data.splice(1, data.length - 1)
+        data1.splice(0, data1.length)
+        myChart.options.scales.yAxes[0].ticks.max = 25;
+        myChart.options.scales.yAxes[0].ticks.min = -5;
+        gravityMass();
+        myChart.update();
+        myChart1.update();
+      }
+
+      // '다음 회차 실행하기'를 클릭한 상태에서 문이 모두 열렸으면 기본값으로 초기화
+      if (picture == 8) {
+        set++
+        setElevator()
+      }
+
+      // '엘리베이터 출발하기'를 누르고 그래프를 클릭했을 때
+      if (startFlag == 1) {
+        alert("엘리베이터가 도착하지 않았습니다.")
+        return;
+      }
+
+      // 엘리베이터가 출발하지 않았다면
+      else if (I == 0) {
+        alert("엘리베이터가 출발하지 않았습니다.")
+        return;
+      }
+
+      // 문이 열리는 중이라면
+      if (picture >= 1 && picture <= 7) {
+        alert("엘리베이터의 문이 열리지 않았습니다.")
+      }
+    }
+
+    // 힘 추가 버튼을 누르면 프로그레스 바가 푸른색으로 변하게 하는 함수
+    function pressPower() {
+      barColor = 0;
+      progressbar.setAttribute("class", "progress-bar progress-bar-striped progress-bar-animated bg-primary");
+    }
+
+    // 힘 제거 버튼을 누르면 프로그레스 바가 붉은색으로 변하게 하는 함수
+    function removePower() {
+      barColor = 1;
+      progressbar.setAttribute("class", "progress-bar progress-bar-striped progress-bar-animated bg-danger");
+    }
+
+    // 도움말로 돌아가는 함수
+    function setBack() {
+      window.location.assign("help.html");
+    }
+
+    // 튜토리얼버튼을 클릭시 튜토리얼이 보이게 하는 함수
+    function loadTutorial() {
+      tutorial.style.display = 'block'
+    }
+
+    // 튜토리얼 종료하는 함수
+    function closePage() {
+      localStorage.setItem("checkTutorial", 1);
+      tutorial.style.display = 'none';
+    }
+
+    // 시뮬레이션 기록 저장하는 함수
+    function saveData(check) {
+      if (typeof (Storage) !== "undefined") {
+        chart.rows[1].cells[check].innerHTML = hour + ":" + minute + ":" + second + "<span style='font-size:15.7px;'>" +
+          "&nbsp" + addZeros(time1, 2) + "</span>";
+        clock.innerHTML = "00" + ":" + "00" + ":" + "00" + "<span style='font-size:50%;'>" + "&nbsp" + "00" + "</span>";
+        localStorage.setItem("mass" + check, m)
+        chart.rows[2].cells[check].innerHTML = maxVel.toFixed(2) + "M/H";
+        chart.rows[3].cells[check].innerHTML = avgVel.toFixed(2) + "M/H";
+        chart.rows[4].cells[check].innerHTML = distance.toFixed(1) + "M";
+        localStorage.setItem("time" + check, hour + ":" + minute + ":" + second + "<span style='font-size:40px;'>" +
+          "&nbsp" + addZeros(time1, 2) + "</span>");
+        localStorage.setItem("best" + check, maxVel.toFixed(2));
+        localStorage.setItem("average" + check, avgVel.toFixed(2));
+        localStorage.setItem("distance" + check, distance.toFixed(1));
+        localStorage.setItem("myChart_graph" + check, JSON.stringify(myChart.data.datasets[0].data));
+        localStorage.setItem("myChart1_graph" + check, JSON.stringify(myChart1.data.datasets[0].data));
+        localStorage.setItem("myChart_x_max" + check, JSON.stringify(myChart.options.scales.xAxes[0].ticks.max));
+        localStorage.setItem("myChart_y_max" + check, JSON.stringify(myChart.options.scales.yAxes[0].ticks.max));
+        localStorage.setItem("myChart_y_min" + check, JSON.stringify(myChart.options.scales.yAxes[0].ticks.min));
+        localStorage.setItem("myChart1_x_max" + check, JSON.stringify(myChart1.options.scales.xAxes[0].ticks.max));
+        localStorage.setItem("gravity" + check, JSON.stringify(myChart.data.datasets[1].data));
+      } else {
+        alert("구글 크롬 브라우저를 사용해 주세요.");
+      }
+    }
+
+    document.getElementById("start").addEventListener("click", elevatorMove);
+    document.getElementById("close1").addEventListener("click", closePage);
+    document.getElementById("close2").addEventListener("click", closePage);
+    document.getElementById("close3").addEventListener("click", closePage);
+    document.getElementById("restart").addEventListener("click", setRestart);
+    document.getElementById("press").addEventListener("click", pressPower);
+    document.getElementById("remove").addEventListener("click", removePower);
+    document.getElementById("loader").addEventListener("click", loadTutorial)
+  </script>
+</body>
+
+</html>
